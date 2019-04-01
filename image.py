@@ -53,11 +53,29 @@ def draw_corners(img): # gray channel img
         cv2.circle(img, (x,y), 3, 255, 1)
     return img
 
+def frequences(ax_points):
+    min, max = np.min(ax_points), np.max(ax_points)
+    R = max - min
+    N = int(np.round(1 + 1.322*np.log10(ax_points.size)))
+    h = np.round(R / N)
+    sort = np.sort(ax_points)
+    freqs = []
+    step = min
+    for i, y in enumerate(range(N)):
+        step_upper = step + h*(i + 1)
+        gt = sort[sort >= step]
+        lr = gt[gt <= step_upper]
+        freqs.append([step, step_upper, lr])
+        step = step_upper
+    return freqs
+
 examples = []
 
-test_img_path = 'arrow_test/map_3.png'
+test_img_path = 'assets/arrow_test/map_5.png'
 res = cv2.imread(test_img_path)
 res = extrude_arrow(res)
+# res = draw_corners(res)  
+# _show_rgb(res)
 points = np.transpose(np.nonzero(res)) # get all white points
 yf = lambda point: point[1]
 xf = lambda point: point[0]
@@ -65,41 +83,20 @@ xf = lambda point: point[0]
 y_points = np.array([yf(yi) for yi in points])
 x_points = np.array([xf(xi) for xi in points])
 
-def frequences(range):
-    min, max = np.min(range), np.max(range)
-    R = max - min
-    N = np.round(1 + 1.322*np.log10(range.size))
-    h = np.round(R / N)
-    sort = np.sort(range)
-    freqs = np.zeros(int(N))
-    step = min
-    for i, y in enumerate(freqs):
-        step_upper = step + h*(i + 1)
-        gt = sort[sort >= step]
-        lr = gt[gt <= step_upper]
-        freqs[i] = lr.size
-        step = step_upper
-    return freqs
-
-x_freq = frequences(x_points)
 y_freq = frequences(y_points)
-print(x_freq, y_freq)
+print('x_points',np.sort(x_points))
+print('y_points', np.sort(y_points))
+print('points', np.sort(points))
+print('freqs', y_freq)
 
 # _, ax = plot.subplots()
-# for i, r in enumerate(y_range):
-    # print(r)
-    # ax.scatter(1,1, s=r, color='r', alpha=1/r)
+# for p in points:
+#     ax.scatter(p[1], p[0], s=10, color='b')
 # plot.show()
 
 # for i in range(1,7):
     # test_img_path = 'arrow_test/map_' + str(i) + '.png'
     # res = cv2.imread(test_img_path)
-    # res = extrude_arrow(res)
-    # points = np.transpose(np.nonzero(res))
-    # print(points)
-    # print('========')
-    # res = _gray_to_rgb(res)
-    # res = draw_corners(res)  
     # examples.append(res)
 
 # _show_range(examples)

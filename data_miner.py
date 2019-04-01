@@ -59,7 +59,7 @@ while True:
     sleep(0.25)
     img = u.screenshot(region=rect)
     roi = get_minimap(img)
-    cv2.imwrite('data/mained_' + str(id) + '.png', roi)
+    cv2.imwrite('assets/data/mained_' + str(id) + '.png', roi)
     id = id + 1
 
 print('exec_time: ' + str(time.time() - st))
