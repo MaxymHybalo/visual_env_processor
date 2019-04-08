@@ -65,29 +65,51 @@ def frequences(ax_points):
         step_upper = step + h*(i + 1)
         gt = sort[sort >= step]
         lr = gt[gt <= step_upper]
-        freqs.append([step, step_upper, lr])
+        freqs.append([int(step), int(step_upper), lr.size])
         step = step_upper
     return freqs
 
+def _convert_points_to_vectors(points):
+    yf = lambda point: point[1]
+    xf = lambda point: point[0]
+    y_points = np.array([yf(yi) for yi in points])
+    x_points = np.array([xf(xi) for xi in points])
+    return x_points, y_points
+
+def _max_sequence_range(vector):
+    max = 0
+    item = None
+    for v in vector:
+        if (v[2] > max):
+            max = v[2]
+            item = v
+    return item
+
 examples = []
+for i in range(1, 7):
+    test_img_path = 'assets/arrow_test/map_' + str(i) + '.png'
+    res = cv2.imread(test_img_path)
+    res = extrude_arrow(res)
+    # res = draw_corners(res)  
+    # _show_rgb(res)
+    points = np.transpose(np.nonzero(res)) # get all white points
 
-test_img_path = 'assets/arrow_test/map_5.png'
-res = cv2.imread(test_img_path)
-res = extrude_arrow(res)
-# res = draw_corners(res)  
-# _show_rgb(res)
-points = np.transpose(np.nonzero(res)) # get all white points
-yf = lambda point: point[1]
-xf = lambda point: point[0]
+    x_points, y_points = _convert_points_to_vectors(points) # format to single vectors
 
-y_points = np.array([yf(yi) for yi in points])
-x_points = np.array([xf(xi) for xi in points])
+    y_freq = frequences(y_points)
+    x_freq = frequences(x_points)
+    print('##### ', i, ' #####')
+    print('y_freqs', y_freq, 'max_range', _max_sequence_range(y_freq))
+    print('x_freqs', x_freq, 'max_range', _max_sequence_range(x_freq))
+    x_max_range = _max_sequence_range(x_freq)
+    y_max_range = _max_sequence_range(y_freq)
 
-y_freq = frequences(y_points)
-print('x_points',np.sort(x_points))
-print('y_points', np.sort(y_points))
-print('points', np.sort(points))
-print('freqs', y_freq)
+    # drawing hacks
+    res = _gray_to_rgb(res)
+    res = cv2.rectangle(res, (x_max_range[0], y_max_range[0]), (x_max_range[1], y_max_range[1]), [0,0,255], 1)
+
+    examples.append(res)
+
 
 # _, ax = plot.subplots()
 # for p in points:
@@ -99,6 +121,6 @@ print('freqs', y_freq)
     # res = cv2.imread(test_img_path)
     # examples.append(res)
 
-# _show_range(examples)
+_show_range(examples)
 
 # cv2.cvtColor(np.uint8([[[0,0,0]]]), cv2.COLOR_BGR2HSV)
