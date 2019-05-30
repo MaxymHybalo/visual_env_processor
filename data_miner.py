@@ -8,9 +8,12 @@ from time import sleep
 W_HEIGHT = 1050
 MINIMAP_SIZE = 256
 MINIMAP_CONTROL_SIZE = 24
+
+
 def _show_rgb(img):
     plot.imshow(img)
     plot.show()
+
 
 def window_rect(format=0):
     '''
@@ -18,9 +21,11 @@ def window_rect(format=0):
     1 - pair
     3 - left, top, width, height
     '''
-    w_start_img, w_end_img = ('assets/window_marker.png', 'assets/window_cross.png')
+    w_start_img, w_end_img = (
+        'assets/window_marker.png', 'assets/window_cross.png')
     w_start, w_end = u.locateOnScreen(w_start_img), u.locateOnScreen(w_end_img)
-    window_bounding_rect = (w_start[0], w_start[1] + w_start[3], w_end[0] + w_end[2],  W_HEIGHT + w_end[3])
+    window_bounding_rect = (
+        w_start[0], w_start[1] + w_start[3], w_end[0] + w_end[2], W_HEIGHT + w_end[3])
     if format == 0:
         return window_bounding_rect
     if format == 1:
@@ -30,6 +35,7 @@ def window_rect(format=0):
         width = w[2] - w[0]
         height = w[3] - w[1]
         return (w[0], w[1], width, height)
+
 
 rect = window_rect(format=2)
 st = time.time()
@@ -51,6 +57,7 @@ def get_minimap(img):
     y = 0 + MINIMAP_CONTROL_SIZE
     h = y + MINIMAP_SIZE
     return img[y:h, x:w]
+
 
 # benchmark
 # for i in range(0,100):
