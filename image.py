@@ -80,10 +80,10 @@ def draw_corners(img):  # gray channel img
 #     return freqs
 
 
-def _convert_points_to_vectors(points):
-    def yf(point): return point[1]
+def cvt_points2vectors(points):
+    def yf(point): return point[0]
 
-    def xf(point): return point[0]
+    def xf(point): return point[1]
     y_points = np.array([yf(yi) for yi in points])
     x_points = np.array([xf(xi) for xi in points])
     return x_points, y_points
@@ -109,30 +109,29 @@ def _build_ranges(points, start, delta):
     return ranges
 
 def build_ranges(axis):
+    if (len(axis) is 0):
+        return None
     a_min = min(axis)
     arange = max(axis) - a_min
     delta = arange / ARROW_BOUNDARY
     return _build_ranges(axis, a_min, delta)
 
-
 examples = []
 # for i in range(1, 2):
-test_img_path = 'assets/arrow_test/map_5.png'
+# test_img_path = 'assets/arrow_test/map_5.png'
+test_img_path = 'assets/data/mained_145.png';
 res = cv2.imread(test_img_path)
 res = extrude_arrow(res)
 # res = draw_corners(res)
 # _show_rgb(res)
 points = np.transpose(np.nonzero(res))  # get all white points
-
-# print(points)
-x_points, y_points = _convert_points_to_vectors(points) # format to single vectors
-
-print(len(x_points))
+x_points, y_points = cvt_points2vectors(points) # format to single vectors
 # for i in range(0, len(x_points)):
     # print(x_points[i], y_points[i])
 
-print('#####')
-build_ranges(x_points)
+# ranges = build_ranges(x_points)
+# print('ranges', ranges)
+
 # print(x_points, y_points)
 # print('y_freqs', y_freq, 'max_range', _max_sequence_range(y_freq))
 # print('x_freqs', x_freq, 'max_range', _max_sequence_range(x_freq))
@@ -148,7 +147,7 @@ build_ranges(x_points)
 
 # _, ax = plot.subplots()
 # for p in points:
-#     ax.scatter(p[1], p[0], s=1, color='b')
+#     ax.scatter(p[1], p[0])
 # plot.show()
 
 # for i in range(1,7):
