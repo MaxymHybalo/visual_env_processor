@@ -14,13 +14,14 @@ def _show_rgb(img):
     plot.imshow(img)
     plot.show()
 
-
+# TODO make benchmark before and after resolve todo's
 def window_rect(format=0):
     '''
     0 - list
     1 - pair
     3 - left, top, width, height
     '''
+    # make search at single screenshot, don't use locateOnScreen twice
     w_start_img, w_end_img = (
         'assets/window_marker.png', 'assets/window_cross.png')
     w_start, w_end = u.locateOnScreen(w_start_img), u.locateOnScreen(w_end_img)

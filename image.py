@@ -62,28 +62,10 @@ def draw_corners(img):  # gray channel img
         cv2.circle(img, (x, y), 3, 255, 1)
     return img
 
-
-# def frequences(ax_points):
-#     min, max = np.min(ax_points), np.max(ax_points)
-#     R = max - min
-#     N = int(np.round(1 + 1.322 * np.log10(ax_points.size)))
-#     h = np.round(R / N)
-#     sort = np.sort(ax_points)
-#     freqs = []
-#     step = min
-#     for i, y in enumerate(range(N)):
-#         step_upper = step + h * (i + 1)
-#         gt = sort[sort >= step]
-#         lr = gt[gt <= step_upper]
-#         freqs.append([int(step), int(step_upper), lr.size])
-#         step = step_upper
-#     return freqs
-
-
 def cvt_points2vectors(points):
     def yf(point): return point[0]
-
     def xf(point): return point[1]
+
     y_points = np.array([yf(yi) for yi in points])
     x_points = np.array([xf(xi) for xi in points])
     return x_points, y_points
@@ -123,29 +105,19 @@ examples = []
 test_img_path = 'assets/data/mained_104.png';
 res = cv2.imread(test_img_path)
 res = extrude_arrow(res)
+
 # res = draw_corners(res)
 # _show_gray(res)
+
 points = np.transpose(np.nonzero(res))  # get all white points
 x_points, y_points = cvt_points2vectors(points) # format to single vectors
+
 # for i in range(0, len(x_points)):
     # print(x_points[i], y_points[i])
 
 # ranges = build_ranges(x_points)
-# print('ranges', ranges)
-
-# print(x_points, y_points)
-# print('y_freqs', y_freq, 'max_range', _max_sequence_range(y_freq))
-# print('x_freqs', x_freq, 'max_range', _max_sequence_range(x_freq))
-# x_max_range = _max_sequence_range(x_freq)
-# y_max_range = _max_sequence_range(y_freq)
-
-# drawing hacks
-# res = _gray_to_rgb(res)
-# res = cv2.rectangle(res, (x_max_range[0], y_max_range[0]), (x_max_range[1], y_max_range[1]), [0,0,255], 1)
 
 # examples.append(res)
-
-
 # _, ax = plot.subplots()
 # for p in points:
 #     ax.scatter(p[1], p[0])
