@@ -88,10 +88,11 @@ def cvt_points2vectors(points):
     x_points = np.array([xf(xi) for xi in points])
     return x_points, y_points
 
-def _count_inserts(points, start, end):
+def _count_inserts(points, start, end, precise_end):
     inserts = 0
     for p in points:
-        if (p >= start and p <= end):
+        end_state = p <= end if precise_end else p < end
+        if (p >= start and end_state):
             inserts += 1
     # print('inserts ', inserts ,' start ', start, ' end ', end)
     return  inserts
@@ -101,7 +102,7 @@ def _build_ranges(points, start, delta):
     start_0 = start
     for i in range(1, ARROW_BOUNDARY + 1):
         end = start_0 + delta * i
-        inserts = _count_inserts(points, start, end)
+        inserts = _count_inserts(points, start, end, i == ARROW_BOUNDARY)
         if (inserts > 0):
             ranges.append((inserts, start, end))
         start = end
@@ -109,7 +110,7 @@ def _build_ranges(points, start, delta):
     return ranges
 
 def build_ranges(axis):
-    if (len(axis) is 0):
+    if (len(axis) <= 25):
         return None
     a_min = min(axis)
     arange = max(axis) - a_min
@@ -119,11 +120,11 @@ def build_ranges(axis):
 examples = []
 # for i in range(1, 2):
 # test_img_path = 'assets/arrow_test/map_5.png'
-test_img_path = 'assets/data/mained_145.png';
+test_img_path = 'assets/data/mained_104.png';
 res = cv2.imread(test_img_path)
 res = extrude_arrow(res)
 # res = draw_corners(res)
-# _show_rgb(res)
+# _show_gray(res)
 points = np.transpose(np.nonzero(res))  # get all white points
 x_points, y_points = cvt_points2vectors(points) # format to single vectors
 # for i in range(0, len(x_points)):
