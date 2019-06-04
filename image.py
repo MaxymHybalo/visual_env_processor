@@ -102,16 +102,41 @@ def build_ranges(axis):
 examples = []
 # for i in range(1, 2):
 # test_img_path = 'assets/arrow_test/map_5.png'
-test_img_path = 'assets/data/mained_104.png';
+test_img_path = 'assets/data/mained_21.png';
 res = cv2.imread(test_img_path)
 res = extrude_arrow(res)
 
 # res = draw_corners(res)
-# _show_gray(res)
+_show_gray(res)
 
 points = np.transpose(np.nonzero(res))  # get all white points
 x_points, y_points = cvt_points2vectors(points) # format to single vectors
 
+# ranges = build_ranges(x_points)
+# print(ranges)
+
+def full_arrow_entry(ranges, inserts):
+    if ranges is None: return
+    subrange = []
+    is_assigned_range = False
+    subrange_points = 0
+    for r in ranges:
+        if not subrange:
+            subrange = [r[1], r[2]]
+        else:
+            if subrange[1] != r[1] and is_assigned_range:
+                is_assigned_range = subrange_points > inserts - subrange_points
+            if subrange[1] == r[1]:
+                subrange[1] = r[2]
+                subrange_points += r[0]
+                is_assigned_range = True
+            elif not is_assigned_range:
+                subrange = [r[1], r[2]]
+
+    return subrange
+
+
+# print('subrange', subrange)
 # for i in range(0, len(x_points)):
     # print(x_points[i], y_points[i])
 
