@@ -3,6 +3,9 @@ import numpy as np
 from matplotlib import pyplot as plot
 import draw_utils as utils
 
+import time
+
+
 IMG = 'test_image_3.png'
 ARROW_BOUNDARY = 10
 
@@ -41,7 +44,8 @@ def extrude_arrow(img):
         # 2. param1 - 60, param2 - 35
         # also with errosion 5,5 param1 10
     '''
-    lower = np.array([21, 190, 0])  # lower arrow yellow color
+    # move to const
+    lower = np.array([20, 190, 0])  # lower arrow yellow color
     upper = np.array([28, 255, 255])  # upper
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, lower, upper)
@@ -99,22 +103,6 @@ def build_ranges(axis):
     delta = arange / ARROW_BOUNDARY
     return _build_ranges(axis, a_min, delta)
 
-examples = []
-# for i in range(1, 2):
-# test_img_path = 'assets/arrow_test/map_5.png'
-test_img_path = 'assets/data/mained_21.png';
-res = cv2.imread(test_img_path)
-res = extrude_arrow(res)
-
-# res = draw_corners(res)
-_show_gray(res)
-
-points = np.transpose(np.nonzero(res))  # get all white points
-x_points, y_points = cvt_points2vectors(points) # format to single vectors
-
-# ranges = build_ranges(x_points)
-# print(ranges)
-
 def full_arrow_entry(ranges, inserts):
     if ranges is None: return
     subrange = []
@@ -135,24 +123,47 @@ def full_arrow_entry(ranges, inserts):
 
     return subrange
 
+test_img_path = 'assets/data/mained_21.png';
+res = cv2.imread(test_img_path)
 
-# print('subrange', subrange)
-# for i in range(0, len(x_points)):
-    # print(x_points[i], y_points[i])
+def _is_point_in_area(point, area):
+    return point >= area[0] and point <= area[1]
 
-# ranges = build_ranges(x_points)
+def arrow_in_area(x_points, y_points, area):
+    return [(x,y) for x, y in zip(x_points, y_points) if _is_point_in_area(x, area)]
 
-# examples.append(res)
-# _, ax = plot.subplots()
-# for p in points:
-#     ax.scatter(p[1], p[0])
-# plot.show()
+def arrow_triangle(arrow):
+    arrow_x = [x for x, _ in arrow]
+    arrow_y = [y for _, y in arrow]
+    
+    return {
+        arrow[arrow_x.index(min(arrow_x))],
+        arrow[arrow_x.index(max(arrow_x))],
+        arrow[arrow_y.index(min(arrow_y))],
+        arrow[arrow_y.index(max(arrow_y))]
+    }
 
-# for i in range(1,7):
-# test_img_path = 'arrow_test/map_' + str(i) + '.png'
-# res = cv2.imread(test_img_path)
-# examples.append(res)
+# cv2 image
+def get_arrow_points(image):
+    image = extrude_arrow(image)
+    points = np.transpose(np.nonzero(image))  # get all white points
+    x_points, y_points = cvt_points2vectors(points) # format to single vectors
+    
+    ranges = build_ranges(x_points)
+    arrow_area = full_arrow_entry(ranges, len(x_points))
+    arrow = arrow_in_area(x_points, y_points, arrow_area)
+    
+    return list(arrow_triangle(arrow))
 
-# _show_range(examples)
+# start = time.time()
+# triangle = get_arrow_points(res)
+# end = time.time()
 
-# cv2.cvtColor(np.uint8([[[0,0,0]]]), cv2.COLOR_BGR2HSV)
+
+# print(triangle, ' ', end - start)
+
+# res = cv2.line(res, triangle[0], triangle[1] ,(0,20,255), 1)
+# res = cv2.line(res, triangle[1], triangle[2] ,(0,20,255), 1)
+# res = cv2.line(res, triangle[2], triangle[0] ,(0,20,255), 1)
+
+# _show_rgb(res)
