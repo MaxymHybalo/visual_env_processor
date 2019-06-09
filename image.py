@@ -123,7 +123,7 @@ def full_arrow_entry(ranges, inserts):
 
     return subrange
 
-test_img_path = 'assets/data/mained_21.png';
+test_img_path = 'assets/data/mained_17.png';
 res = cv2.imread(test_img_path)
 
 def _is_point_in_area(point, area):
@@ -135,13 +135,17 @@ def arrow_in_area(x_points, y_points, area):
 def arrow_triangle(arrow):
     arrow_x = [x for x, _ in arrow]
     arrow_y = [y for _, y in arrow]
-    
-    return {
+    triangle = {
         arrow[arrow_x.index(min(arrow_x))],
         arrow[arrow_x.index(max(arrow_x))],
         arrow[arrow_y.index(min(arrow_y))],
         arrow[arrow_y.index(max(arrow_y))]
     }
+    triangle = list(triangle)
+    if len(triangle) == 3:
+        return triangle
+    else:
+        return None
 
 # cv2 image
 def get_arrow_points(image):
@@ -151,10 +155,12 @@ def get_arrow_points(image):
     
     ranges = build_ranges(x_points)
     arrow_area = full_arrow_entry(ranges, len(x_points))
+    if arrow_area is None:
+        return None
     arrow = arrow_in_area(x_points, y_points, arrow_area)
-    
-    return list(arrow_triangle(arrow))
+    return arrow_triangle(arrow)
 
+get_arrow_points(res)
 # start = time.time()
 # triangle = get_arrow_points(res)
 # end = time.time()
