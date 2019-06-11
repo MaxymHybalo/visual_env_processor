@@ -123,7 +123,7 @@ def full_arrow_entry(ranges, inserts):
 
     return subrange
 
-test_img_path = 'assets/data/mained_17.png';
+test_img_path = 'assets/data/mained_0.png';
 res = cv2.imread(test_img_path)
 
 def _is_point_in_area(point, area):
@@ -160,7 +160,25 @@ def get_arrow_points(image):
     arrow = arrow_in_area(x_points, y_points, arrow_area)
     return arrow_triangle(arrow)
 
-get_arrow_points(res)
+arrow = get_arrow_points(res)
+
+def _mod(a):
+    return np.sqrt(a[0]**2 + a[1]**2)
+
+def get_angle(a, b):
+    mul_ab = a[0]*b[0] + a[1] * b[1]
+    mod_a = _mod(a)
+    mod_b = _mod(b)
+    cos = mul_ab / (mod_a * mod_b)
+    return cos
+
+print('arrow', arrow)
+a = get_angle(arrow[0], arrow[1])
+b = get_angle(arrow[1], arrow[2])
+c = get_angle(arrow[2], arrow[1])
+
+print('a, b ,c', a, b ,c)
+
 # start = time.time()
 # triangle = get_arrow_points(res)
 # end = time.time()
