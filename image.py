@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plot
 import draw_utils as utils
+import math
 
 import time
 
@@ -172,13 +173,30 @@ def get_angle(a, b):
     cos = mul_ab / (mod_a * mod_b)
     return cos
 
+
+def _k(p1, p2):
+    return (p1[1] - p2[1]) / (p1[0] - p2[0])
+
+def tan_f(k1, k2):
+    return (k2 - k1) / (1 + k2*k1)
+
+
+def _degrees(tg):
+    return math.degrees(math.atan(tg))
+
 print('arrow', arrow)
-a = get_angle(arrow[0], arrow[1])
-b = get_angle(arrow[1], arrow[2])
-c = get_angle(arrow[2], arrow[1])
+a = arrow[0]
+b = arrow[1]
+c = arrow[2]
 
-print('a, b ,c', a, b ,c)
+abc = abs(tan_f(_k(a, b), _k(b, c)))
+bca = abs(tan_f(_k(b, c), _k(c, a)))
+cab = abs(tan_f(_k(c, a), _k(a, b)))
 
+print('abc ', abc, _degrees(abc))
+print('bca ', bca, _degrees(bca))
+print('cab ', cab, _degrees(cab))
+print('triangle', _degrees(abc) + _degrees(bca) + _degrees(cab))
 # start = time.time()
 # triangle = get_arrow_points(res)
 # end = time.time()
