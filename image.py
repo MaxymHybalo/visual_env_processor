@@ -163,14 +163,23 @@ def get_arrow_points(image):
 
 arrow = get_arrow_points(res)
 
-def _mod(a):
+def _vector_length(a):
     return np.sqrt(a[0]**2 + a[1]**2)
 
+def _vector(a,b):
+    return b[0] - a[0], b[1] - a[1]
+
+def _sclr_multiply(a, b):
+    return a[0]*b[0] + a[1]*b[1]
+
 def get_angle(a, b):
-    mul_ab = a[0]*b[0] + a[1] * b[1]
-    mod_a = _mod(a)
-    mod_b = _mod(b)
-    cos = mul_ab / (mod_a * mod_b)
+    va = _vector(a[0], a[1])
+    vb = _vector(b[0], b[1])
+    vab = _sclr_multiply(va, vb)
+
+    mod_a = _vector_length(va)
+    mod_b = _vector_length(vb)
+    cos = vab / (mod_a * mod_b)
     return cos
 
 
@@ -181,31 +190,52 @@ def tan_f(k1, k2):
     return (k2 - k1) / (1 + k2*k1)
 
 
-def _degrees(tg):
-    return math.degrees(math.atan(tg))
+def _degrees(rad):
+    return math.degrees(rad)
 
-print('arrow', arrow)
-a = arrow[0]
-b = arrow[1]
-c = arrow[2]
+def min_triangle_angle(arrow):
+    a = arrow[0]
+    b = arrow[1]
+    c = arrow[2]
+    abc = [
+        _degrees(abs(tan_f(_k(a, b), _k(b, c)))),
+        _degrees(abs(tan_f(_k(b, c), _k(c, a)))),
+        _degrees(abs(tan_f(_k(c, a), _k(a, b))))
+    ]
+    
+    min_angle = abc.index(min(abc))
+    angle_point = min_angle + 1 if min_angle < 2 else 0
+    return angle_point
 
-abc = abs(tan_f(_k(a, b), _k(b, c)))
-bca = abs(tan_f(_k(b, c), _k(c, a)))
-cab = abs(tan_f(_k(c, a), _k(a, b)))
+acute = min_triangle_angle(arrow)
+acute_point = arrow[acute]
+arrow.remove(arrow[acute])
 
-print('abc ', abc, _degrees(abc))
-print('bca ', bca, _degrees(bca))
-print('cab ', cab, _degrees(cab))
-print('triangle', _degrees(abc) + _degrees(bca) + _degrees(cab))
+oppsite_mid_x = int(round((arrow[0][0] + arrow[1][0]) / 2))
+oppsite_mid_y = int(round((arrow[0][1] + arrow[1][1]) / 2))
+opposite_mid = oppsite_mid_x, oppsite_mid_y
+triangle_vector = opposite_mid, acute_point
+# oy = (0,0), (100, 0) # side of angle
+oy = opposite_mid, (opposite_mid[0], acute_point[1]) # same as coord start
+print('oy', oy)
+alpha = get_angle(triangle_vector, oy)
+print('alpha', alpha)
+print('_degrees(alpha)', _degrees(alpha))
+print('triangle_vector', triangle_vector)
+# print('opposite_side', opposite_mid)
+# print('triangle_vector', triangle_vector)
+# print('angles ', min_angle, arrow[angle_point])
 # start = time.time()
 # triangle = get_arrow_points(res)
 # end = time.time()
 
 
 # print(triangle, ' ', end - start)
+# res = _gray_to_rgb(res)
+res = cv2.circle(res, arrow[0], 2,(0,20,255), 1)
+res = cv2.circle(res, arrow[1], 2,(0,20,255), 1)
 
-# res = cv2.line(res, triangle[0], triangle[1] ,(0,20,255), 1)
-# res = cv2.line(res, triangle[1], triangle[2] ,(0,20,255), 1)
+res = cv2.line(res, acute_point, opposite_mid ,(255,0,0), 1)
 # res = cv2.line(res, triangle[2], triangle[0] ,(0,20,255), 1)
 
-# _show_rgb(res)
+_show_rgb(res)

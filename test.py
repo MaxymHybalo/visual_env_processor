@@ -1,4 +1,4 @@
-from image  import extrude_arrow, build_ranges, cvt_points2vectors, full_arrow_entry, get_arrow_points
+from image  import extrude_arrow, build_ranges, cvt_points2vectors, full_arrow_entry, get_arrow_points, min_triangle_angle
 import cv2
 import numpy as np
 import csv
@@ -32,10 +32,9 @@ def draw_arrow_area():
 		img = cv2.imread(PATH + FILE_PREFFIX + str(i) + '.png')
 		triangle = get_arrow_points(img)
 		if triangle:
-			img = cv2.line(img, triangle[2], triangle[0] ,(0,20,255), 1)
-			img = cv2.line(img, triangle[1], triangle[2] ,(0,20,255), 1)
-			img = cv2.line(img, triangle[0], triangle[1] ,(0,20,255), 1)
-			cv2.imwrite(PATH + 'fined_arrows/' + str(i) + '.png', img)
+			tink_angle = min_triangle_angle(triangle)
+			img = cv2.circle(img, triangle[tink_angle], 1 ,(255,0,0), 2)
+			cv2.imwrite(PATH + 'acute_angle/' + str(i) + '.png', img)
 
 def _ranges(csf):
 	for i, r in clear_ranges:
