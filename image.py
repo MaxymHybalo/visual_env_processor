@@ -207,21 +207,24 @@ def min_triangle_angle(arrow):
     angle_point = min_angle + 1 if min_angle < 2 else 0
     return angle_point
 
-acute = min_triangle_angle(arrow)
-acute_point = arrow[acute]
-arrow.remove(arrow[acute])
+def opposite_point(arrow, acute):
+    arrow.remove(arrow[acute])
+    oppsite_mid_x = int(round((arrow[0][0] + arrow[1][0]) / 2))
+    oppsite_mid_y = int(round((arrow[0][1] + arrow[1][1]) / 2))
+    return oppsite_mid_x, oppsite_mid_y
 
-oppsite_mid_x = int(round((arrow[0][0] + arrow[1][0]) / 2))
-oppsite_mid_y = int(round((arrow[0][1] + arrow[1][1]) / 2))
-opposite_mid = oppsite_mid_x, oppsite_mid_y
-triangle_vector = opposite_mid, acute_point
-# oy = (0,0), (100, 0) # side of angle
-oy = opposite_mid, (opposite_mid[0], acute_point[1]) # same as coord start
-print('oy', oy)
-alpha = get_angle(triangle_vector, oy)
-print('alpha', alpha)
-print('_degrees(alpha)', _degrees(alpha))
-print('triangle_vector', triangle_vector)
+def pointer_angle(arrow):
+    acute = min_triangle_angle(arrow)
+    acute_point = arrow[acute]
+    opposite = opposite_point(arrow, acute)
+    triangle_vector = opposite, acute_point
+    oy = (0,0), (10, 0) # side of angle
+    alpha = get_angle(triangle_vector, oy)
+
+    return _degrees(alpha)
+# print('alpha', alpha)
+# print('_degrees(alpha)', _degrees(alpha))
+# print('triangle_vector', triangle_vector)
 # print('opposite_side', opposite_mid)
 # print('triangle_vector', triangle_vector)
 # print('angles ', min_angle, arrow[angle_point])
@@ -232,10 +235,10 @@ print('triangle_vector', triangle_vector)
 
 # print(triangle, ' ', end - start)
 # res = _gray_to_rgb(res)
-res = cv2.circle(res, arrow[0], 2,(0,20,255), 1)
-res = cv2.circle(res, arrow[1], 2,(0,20,255), 1)
+# res = cv2.circle(res, arrow[0], 2,(0,20,255), 1)
+# res = cv2.circle(res, arrow[1], 2,(0,20,255), 1)
 
-res = cv2.line(res, acute_point, opposite_mid ,(255,0,0), 1)
+# res = cv2.line(res, acute_point, opposite_mid ,(255,0,0), 1)
 # res = cv2.line(res, triangle[2], triangle[0] ,(0,20,255), 1)
 
-_show_rgb(res)
+# _show_rgb(res)

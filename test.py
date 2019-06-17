@@ -1,4 +1,4 @@
-from image  import extrude_arrow, build_ranges, cvt_points2vectors, full_arrow_entry, get_arrow_points, min_triangle_angle
+from image  import extrude_arrow, build_ranges, cvt_points2vectors, full_arrow_entry, get_arrow_points, min_triangle_angle, pointer_angle, opposite_point
 import cv2
 import numpy as np
 import csv
@@ -33,8 +33,12 @@ def draw_arrow_area():
 		triangle = get_arrow_points(img)
 		if triangle:
 			tink_angle = min_triangle_angle(triangle)
-			img = cv2.circle(img, triangle[tink_angle], 1 ,(255,0,0), 2)
+			tail_point = opposite_point(triangle.copy(), tink_angle)
+			print('tail_point', tail_point)
+			img = cv2.line(img, triangle[tink_angle], tail_point,(255,0,0), 2)
+			img = cv2.putText(img, str(pointer_angle(triangle.copy())), (0,10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255,0), 2)
 			cv2.imwrite(PATH + 'acute_angle/' + str(i) + '.png', img)
+
 
 def _ranges(csf):
 	for i, r in clear_ranges:
@@ -83,6 +87,11 @@ def _triangles(csf):
 			for el in t:
 				csf.writerow([''] + list(el))
 
+def _angles(csf):
+	for i, t in enumerate(triangles):
+		if t: 
+			csf.writerow([i, pointer_angle(t)])
+
 def write_data(path, selecor):
 	f = path
 	f = open(f, 'w')
@@ -99,7 +108,8 @@ def write_arrow_ranges_rest():
 	write_data(PATH + 'text/mained_ranges_count_clear.csv', _ranges_count_clear)
 	write_data(PATH + 'text/full_range.csv', _full_ranges)
 	write_data(PATH + 'text/triangles.csv', _triangles)
+	write_data(PATH + 'text/angles.csv', _angles)
 
-# write_arrow_ranges_rest()
+write_arrow_ranges_rest()
 
 draw_arrow_area()
