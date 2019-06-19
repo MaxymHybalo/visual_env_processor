@@ -166,6 +166,9 @@ arrow = get_arrow_points(res)
 def _vector_length(a):
     return np.sqrt(a[0]**2 + a[1]**2)
 
+def _line_length(a, b):
+    return np.sqrt((b[0]-a[0])**2 + (b[1]-a[1])**2)
+
 def _vector(a,b):
     return b[0] - a[0], b[1] - a[1]
 
@@ -215,30 +218,18 @@ def opposite_point(arrow, acute):
 
 def pointer_angle(arrow):
     acute = min_triangle_angle(arrow)
-    acute_point = arrow[acute]
-    opposite = opposite_point(arrow, acute)
-    triangle_vector = opposite, acute_point
-    oy = (0,0), (10, 0) # side of angle
-    alpha = get_angle(triangle_vector, oy)
+    b = opposite_point(arrow.copy(), acute)
+    c = b[0], arrow[acute][1]
+    a = arrow[acute]
+    ab = _line_length(b, a)
+    bc = _line_length(b, c)
+    ac = _line_length(a, c)
 
-    return _degrees(alpha)
-# print('alpha', alpha)
-# print('_degrees(alpha)', _degrees(alpha))
-# print('triangle_vector', triangle_vector)
-# print('opposite_side', opposite_mid)
-# print('triangle_vector', triangle_vector)
-# print('angles ', min_angle, arrow[angle_point])
-# start = time.time()
-# triangle = get_arrow_points(res)
-# end = time.time()
+    tan_a = bc / ac
+    return _degrees(tan_a), (a, b, c), (ab, ac, bc)
 
-
-# print(triangle, ' ', end - start)
-# res = _gray_to_rgb(res)
-# res = cv2.circle(res, arrow[0], 2,(0,20,255), 1)
-# res = cv2.circle(res, arrow[1], 2,(0,20,255), 1)
-
-# res = cv2.line(res, acute_point, opposite_mid ,(255,0,0), 1)
-# res = cv2.line(res, triangle[2], triangle[0] ,(0,20,255), 1)
+# res = cv2.line(res, a, b, [255,0,0], 1)
+# res = cv2.line(res, a, c, [255,200,0], 1)
+# res = cv2.line(res, b, c, [255,200,0], 1)
 
 # _show_rgb(res)

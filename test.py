@@ -32,13 +32,17 @@ def draw_arrow_area():
 		img = cv2.imread(PATH + FILE_PREFFIX + str(i) + '.png')
 		triangle = get_arrow_points(img)
 		if triangle:
-			tink_angle = min_triangle_angle(triangle)
-			tail_point = opposite_point(triangle.copy(), tink_angle)
-			print('tail_point', tail_point)
-			img = cv2.line(img, triangle[tink_angle], tail_point,(255,0,0), 2)
-			img = cv2.putText(img, str(pointer_angle(triangle.copy())), (0,10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255,0), 2)
-			cv2.imwrite(PATH + 'acute_angle/' + str(i) + '.png', img)
+			angle, points, lengths = pointer_angle(triangle)
+			img = cv2.line(img, points[0], points[1],(255,0,0), 1)
+			img = cv2.line(img, points[0], points[2],(255,100,0), 1)
+			img = cv2.line(img, points[1], points[2],(255,200,10), 1)
 
+			img = cv2.putText(img, str(angle), (0,10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255,0), 2)
+			img = cv2.putText(img, str(lengths[0]), (0,25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 1)
+			img = cv2.putText(img, str(lengths[1]), (0,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 100, 0), 1)
+			img = cv2.putText(img, str(lengths[2]), (0,75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 200,10), 1)
+
+			cv2.imwrite(PATH + 'acute_angle/' + str(i) + '.png', img)
 
 def _ranges(csf):
 	for i, r in clear_ranges:
