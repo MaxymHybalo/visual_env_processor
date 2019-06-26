@@ -219,15 +219,34 @@ def opposite_point(arrow, acute):
 def pointer_angle(arrow):
     acute = min_triangle_angle(arrow)
     b = opposite_point(arrow.copy(), acute)
-    c = b[0], arrow[acute][1]
     a = arrow[acute]
+    c = a[0], b[1]
     ab = _line_length(b, a)
     bc = _line_length(b, c)
     ac = _line_length(a, c)
-
-    tan_a = bc / ac
-    return _degrees(tan_a), (a, b, c), (ab, ac, bc)
-
+    a_x, a_y = a
+    b_x, b_y = b
+    sin_a = ac / ab
+    # 1th circle part
+    angle = _degrees(math.asin(sin_a))
+    # 2nd
+    if b_y > a_y and b_x > a_x:
+        angle = 90 + (90 - angle)
+    # 3rd
+    if b_y < a_y and b_x > a_x:
+        angle = 180 + angle
+    # 4th
+    if b_y < a_y and b_x < a_x:
+        angle = 270 + (90 -angle)
+    if b_y == a_y and a_x > b_x:
+        angle = 0
+    if b_x == a_x and a_y < b_y:
+        angle = 90
+    if b_y == a_y and a_x < b_x:
+        angle = 180
+    if b_x == a_x and a_y > b_y:
+        angle = 270
+    return angle, (a, b, c), (ab, ac, bc)
 # res = cv2.line(res, a, b, [255,0,0], 1)
 # res = cv2.line(res, a, c, [255,200,0], 1)
 # res = cv2.line(res, b, c, [255,200,0], 1)

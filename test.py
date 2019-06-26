@@ -33,14 +33,15 @@ def draw_arrow_area():
 		triangle = get_arrow_points(img)
 		if triangle:
 			angle, points, lengths = pointer_angle(triangle)
-			img = cv2.line(img, points[0], points[1],(255,0,0), 1)
-			img = cv2.line(img, points[0], points[2],(255,100,0), 1)
-			img = cv2.line(img, points[1], points[2],(255,200,10), 1)
-
+			a,b,c = points
+			img = cv2.line(img, a, b,(255,0,0), 1)
+			img = cv2.line(img, a, c,(0,255,0), 1)
+			img = cv2.line(img, b, c,(0,0,255), 1)
+			img = cv2.circle(img, a, 1, (100, 100,255), 1)
 			img = cv2.putText(img, str(angle), (0,10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255,0), 2)
 			img = cv2.putText(img, str(lengths[0]), (0,25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 1)
-			img = cv2.putText(img, str(lengths[1]), (0,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 100, 0), 1)
-			img = cv2.putText(img, str(lengths[2]), (0,75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 200,10), 1)
+			img = cv2.putText(img, str(lengths[1]), (0,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1)
+			img = cv2.putText(img, str(lengths[2]), (0,75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255), 1)
 
 			cv2.imwrite(PATH + 'acute_angle/' + str(i) + '.png', img)
 
