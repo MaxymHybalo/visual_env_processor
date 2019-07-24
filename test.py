@@ -3,9 +3,9 @@ import cv2
 import numpy as np
 import csv
 
-FILE_PREFFIX = 'mained_'
+FILE_PREFFIX = 'mained_horizon_'
 PATH = 'assets/data/'
-MAX_FILES = 255
+MAX_FILES = 122
 
 mained_ranges = []
 clear_ranges = []
